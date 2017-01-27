@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags">
+
+    <h:body>
+
+        <ui:composition template="../template/template.xhtml">	
+        
+            <ui:define name="content">
+        <h:form id="productsForm">
+            <p:growl id="messages" showDetail="true"/>
+            <p:dataTable var="products"
+                         value="#{productsController.products}"
+                         id="productsTable"
+                         editable="true"
+                         selectionMode="single"
+                         rowKey="#{products.productId}"
+                         >
+                <p:column id="productImage" headerText="Image">
+                    <h:graphicImage value="/resources/imgs/#{products.productId}.jpg" styleClass="productImage"/>
+                </p:column>
+                <p:column id="productName" headerText="Product Name">          
+                    <p:outputLabel value="#{products.productName}"/>
+                </p:column>
+                <p:column id="productDesc" headerText="Product Description">
+                    <p:outputLabel value="#{products.productDesc}"/>
+                </p:column>
+                <p:column id="productPrice" headerText="Product Price">
+                    <p:outputLabel value="#{products.productPrice}">
+                        <f:convertNumber type="currency"/>
+                    </p:outputLabel>
+                </p:column>
+                <p:column style="width: 10%" id="productQty" headerText="QTY On Hand">
+                    <p:outputLabel value="#{products.qtyInStock}"/>
+                </p:column>
+                <c:if test="#{sec:isAuthenticated()}">
+                    <p:column headerText="Add to Cart" style="width: 5%">
+                        <p:commandButton value="Add" action="#{newOrderService.addToOrder(products.productId)}" 
+                                         update=":productsForm:shoppingCart :productsForm:messages :productsForm:confirmCart"
+                                         id="addToCart"/>
+                    </p:column>
+                </c:if>
+            </p:dataTable>
+            <p:dataTable id="shoppingCart"
+                         var="products"
+                         value="#{newOrderService.productsOrdered}">
+
+                <p:column id="productName" headerText="Product Name">          
+                    <p:outputLabel value="#{products.productName}"/>
+                </p:column>
+                <p:column id="productDesc" headerText="Product Description">
+                    <p:outputLabel value="#{products.productDesc}"/>
+                    <f:facet name="footer">
+                        <p:outputLabel value="Total After Tax:" style="text-align: right">
+
+                        </p:outputLabel>
+                    </f:facet>
+                </p:column>
+                <p:column id="productPrice" headerText="Product Price">
+                    <p:outputLabel value="#{products.productPrice}">
+                        <f:convertNumber type="currency"/>
+                    </p:outputLabel>
+                    <f:facet name="footer">
+                        <p:outputLabel value="#{newOrderService.totalPrice}">
+                            <f:convertNumber type="currency"/>
+                        </p:outputLabel>
+                    </f:facet>
+                </p:column>
+
+
+                <f:facet name="footer">
+                    <c:if test="#{sec:isAuthenticated()}">
+                        <p:column headerText="Add to Cart" style="width: 5%">
+                            <p:commandButton id="modalDialogButton" 
+                                             value="Confirm Order" 
+                                             onclick="PF('dlg2').show();" 
+                                             type="button"
+                                             update=":productsForm:totalPrice :productsForm:shoppingCart :productsForm:confirmCart"/>
+
+                        </p:column>
+                    </c:if>
+                </f:facet>
+            </p:dataTable>
+            <p:dialog id="modalDialog" header="Confirm Order" widgetVar="dlg2" modal="true" height="auto">
+                <p:dataTable id="confirmCart"
+                             var="products"
+                             value="#{newOrderService.productsOrdered}">
+
+                    <p:column id="productName" headerText="Product Name">          
+                        <p:outputLabel value="#{products.productName}"/>
+                    </p:column>
+                    <p:column id="productDesc" headerText="Product Description">
+                        <p:outputLabel value="#{products.productDesc}"/>
+                        <f:facet name="footer">
+                            <p:outputLabel value="Total After Tax:" style="text-align: right">
+
+                            </p:outputLabel>
+                        </f:facet>
+                    </p:column>
+                    <p:column id="productPrice" headerText="Product Price">
+                        <p:outputLabel value="#{products.productPrice}">
+                            <f:convertNumber type="currency"/>
+                        </p:outputLabel>
+                        <f:facet name="footer">
+                            <p:outputLabel value="#{newOrderService.totalPrice}">
+                                <f:convertNumber type="currency"/>
+                            </p:outputLabel>
+                        </f:facet>
+                    </p:column>
+                    <p:summaryRow>
+                        <p:column colspan="2" style="text-align: right">
+                            Total:
+                        </p:column>
+                        <p:column id="totalPrice" headerText="Product Price">
+                            <p:outputLabel value="#{newOrderService.totalPrice}">
+                                <f:convertNumber type="currency"/>
+                            </p:outputLabel>
+                        </p:column>
+                    </p:summaryRow>
+
+                    <f:facet name="footer">
+                        <c:if test="#{sec:isAuthenticated()}">
+                            <p:column headerText="Add to Cart" style="width: 5%">
+
+                                <p:commandButton value="Confirm Order" 
+                                                 action="#{newOrderService.confirmOrder()}" 
+                                                 update=":productsForm:shoppingCart :productsForm:messages :productsForm:confirmCart"
+                                                 onclick="PF('dlg2').hide();" />
+                                <p:commandButton value="Cancel"
+                                                 onclick="PF('dlg').hide()"/>
+                            </p:column>
+                        </c:if>
+                    </f:facet>
+                </p:dataTable>
+            </p:dialog>
+        </h:form>
+                </ui:define>
+        </ui:composition>
+
+
+    </h:body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
+

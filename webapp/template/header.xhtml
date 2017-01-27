@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:sec="http://www.springframework.org/security/facelets/tags"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      >
+    <body>
+        <ui:composition>
+
+            <p:graphicImage value="/resources/imgs/header.jpg" id="header" />
+            <p:growl id="messages"/>
+            <h:form>
+                <p:menubar>
+                    <p:menuitem value="Home" url="/"/>
+                    <sec:ifAnyGranted roles="ROLE_ADMIN">
+                        <p:menuitem value="Admin" url="/faces/admin/index.xhtml"/>
+                    </sec:ifAnyGranted>
+                    <sec:ifAnyGranted roles="ROLE_ADMIN">
+                        <p:submenu label="Orders">
+                            <p:menuitem value="List All Orders" url="/faces/admin/orders/index.xhtml"/>
+                        </p:submenu>
+                    </sec:ifAnyGranted>
+                    <p:submenu label="Products">
+                        <p:menuitem value="List Products" url="/faces/products.xhtml"/>
+                        <sec:ifAnyGranted roles="ROLE_ADMIN">
+                            <p:menuitem value="Edit Products" url="/faces/admin/products/index.xhtml"/>
+                        </sec:ifAnyGranted>
+                    </p:submenu>
+                    <sec:ifAnyGranted roles="ROLE_ADMIN, ROLE_CUSTOMER">
+                        <p:menuitem value="Place Order" url="/faces/customer/index.xhtml"/>
+                    </sec:ifAnyGranted>
+                    <sec:ifAnyGranted roles="ROLE_ADMIN">
+                        <p:submenu label="Customers" icon="ui-icon-contact">
+                            <p:menuitem value="List Customers" url="/faces/admin/customers/index.xhtml"/>
+                            <p:menuitem value="New Customer" url="/faces/admin/customers/newCustomer.xhtml"/>
+                        </p:submenu>
+
+                        
+                    </sec:ifAnyGranted>
+                    <f:facet name="options">
+                        <c:if test="#{sec:isAuthenticated()}">
+                            Logged in as: #{request.userPrincipal.name}
+                            <h:outputLink value="/final-distjava/j_spring_security_logout">logout</h:outputLink>
+                        </c:if>
+                        <sec:ifNotGranted roles="ROLE_ADMIN, ROLE_CUSTOMER">
+                            <h:form id="loginForm" prependId="false" style="float: right">
+
+                                <p:watermark for="j_username" value="username@isp.com"/>                                
+                                <h:outputLabel value="Email" for="j_username" />
+                                <p:inputText id="j_username" value="#{loginBean.userName}" 
+                                             required="true" label="Email" requiredMessage="Email is required"
+                                             validatorMessage="Please use a valid email address">
+                                    <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                                </p:inputText>
+                                <p:watermark for="j_password" value="password"/>
+                                <h:outputLabel value="Password" for="j_password"/>
+                                <p:password id="j_password" value="#{loginBean.password}" feedback="false"
+                                            required="true" label="Password" requiredMessage="Password is required"
+                                            validatorMessage="Password must be at least 7 characters" />
+                                <h:outputText value=""/>
+                                <p:commandButton action="#{loginBean.doLogin()}" value="Login" ajax="false"/>
+                                <h:link outcome="/register/registerCustomer" value="Register"/>
+                            </h:form>
+                        </sec:ifNotGranted>
+
+                    </f:facet>
+
+                </p:menubar>
+
+            </h:form>
+
+        </ui:composition>
+    </body>
+</html>

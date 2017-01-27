@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="/template/template.xhtml">
+
+
+            <ui:define name="content">
+                
+                <h:form id="customerForm" styleClass="customerForm">
+                    <p:growl id="messages" showDetail="true"/>
+                    <p:dataTable value="#{customerAddressDto.customers}"
+                                 var="customers"
+                                 selectionMode="single"
+                                 selection="#{customerAddressDto.customer}"
+                                 rowKey="#{customers.customerId}"
+                                 editable="true"
+                                 id="customerTable"
+                                 editMode="row">
+                       
+                        <p:ajax event="rowEdit" listener="#{customerAddressDto.onEdit}" update=":customerForm:messages" />
+                        <p:ajax event="rowEditCancel" listener="#{customerAddressDto.onCancel}" update=":customerForm:messages" />
+                        <p:column style="width: 10%" id="customerFirstName" headerText="Customer First Name">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{customers.firstName}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{customers.firstName}" style="width: 100%"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 10%" id="customerLastName" headerText="Customer Last Name">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{customers.lastName}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{customers.lastName}" style="width: 100%"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 10%" id="customerEmail" headerText="Customer Email*">
+                                    <h:outputLink value="mailto:#{customers.customerEmail}">
+                                        <h:outputText value="#{customers.customerEmail}"/>
+                                    </h:outputLink>                             
+                        </p:column>
+                        <p:column style="width: 10%" id="addressLine1" headerText="Address Line 1">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{customerAddressDto.customerAddress(customers.addressId.addressId).line1}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{customerAddressDto.address.line1}" style="width: 100%"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 10%" id="addressLine2" headerText="Address Line 2">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{customerAddressDto.customerAddress(customers.addressId.addressId).line2}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{customerAddressDto.address.line2}" style="width: 100%"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 10%" id="city" headerText="City">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{customerAddressDto.customerAddress(customers.addressId.addressId).city}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{customerAddressDto.address.city}" style="width: 100%"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 10%" id="state" headerText="State">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{customerAddressDto.customerAddress(customers.addressId.addressId).state}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{customerAddressDto.address.state}" style="width: 100%"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 10%" id="zipCode" headerText="Zip Code">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{customerAddressDto.customerAddress(customers.addressId.addressId).zipCode}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{customerAddressDto.address.zipCode}" style="width: 100%"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 10%" id="rowEditer" headerText="Edit">
+                            <p:rowEditor/>
+                        </p:column>
+                        
+                        <f:facet name="footer">
+                            * = non-editable this is username
+                        </f:facet>
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

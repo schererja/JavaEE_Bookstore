@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/template/template.xhtml">
+  
+
+    <ui:define name="content">
+        
+        <h:form id="productsForm">
+            <p:outputLabel value="Customer Orders" styleClass="tableHeader"/>
+            <p:growl id="messages" showDetail="true"/>
+            <p:dataTable var="orders"
+                         value="#{ordersController.orders}"
+                         id="productsTable"
+                         editable="true"
+                         rows="10"
+                         rowsPerPageTemplate="5,10,15"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         paginator="true"
+                         rowKey="#{orders.orderId}"
+                         >
+
+                <p:column id="customerfName" headerText="Customer First Name">
+                    <p:outputLabel value="#{orders.customerId.firstName}"/>
+
+                </p:column>
+                <p:column id="customerlName" headerText="Customer Last Name">
+
+                    <p:outputLabel value="#{orders.customerId.lastName}"/>
+                </p:column>
+                <p:column id="dateOrdered" headerText="Date Ordered">
+                    <p:outputLabel value="#{orders.dateOrdered}"/>
+                </p:column>
+                <p:column id="orderId" headerText="Order Number">
+                    <p:commandLink action="#{ordInfoService.viewOrder()}" value="#{orders.orderId}">
+                        <f:param name="id" value="#{orders.orderId}" />
+                    </p:commandLink>
+                </p:column>
+                
+            </p:dataTable>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>
+</html>
